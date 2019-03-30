@@ -337,7 +337,7 @@ public class World
 		}
 	}
 
-	private int getMaxDepth()
+	public int getMaxDepth()
 	{
 		return this.maxDepth;
 	}

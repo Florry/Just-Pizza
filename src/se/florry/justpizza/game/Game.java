@@ -35,11 +35,11 @@ public class Game
 	{
 		this.engine = engine;
 		this.world = new World();
-		this.lighting = new Lighting(this.world);
 		this.fpsMeter = new TextModel("FPS: ", 16, new Vector2f(10, 10), Constants.Colors.GREEN);
 		this.gravity = new Gravity(this.world);
 		this.playerHumanoid = new Humanoid(this.world, this.engine.input());
 		this.player = new Player(this.engine.input(), this.world, this.playerHumanoid);
+		this.lighting = new Lighting(this.world, this.player);
 	}
 
 	protected void init()
@@ -66,12 +66,13 @@ public class Game
 	{
 		this.engine.run(deltaTime ->
 		{
+
 			setDeltaTime(deltaTime);
 			this.processGravity();
 			this.processWorld();
-			this.processLighting();
 			this.player.process(deltaTime);
 			this.displayFPS();
+			this.processLighting();
 
 			this.world.renderedObjects = 0;
 		});
@@ -84,7 +85,7 @@ public class Game
 
 	private void addInputs()
 	{
-		final Vector2f speed = new Vector2f(1, 0);
+		final Vector2f speed = new Vector2f(100, 0);
 
 		this.engine.input()
 				.press(GLFW.GLFW_KEY_RIGHT, Void ->

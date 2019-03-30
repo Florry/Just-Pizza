@@ -18,12 +18,16 @@ import se.florry.justpizza.model.entity.EntityInterface;
 
 public class WorldBlock implements EntityInterface
 {
+	static Integer idIndex = 0;
+
 	protected final QuadModel modelData;
 	protected final Material material;
 	protected final Color lightLevel;
 	protected final Color indirectLightColor;
 	protected boolean hasCollision;
 	protected boolean isSolid;
+
+	public final Integer id;
 
 	public final Vector3f position;
 
@@ -36,6 +40,8 @@ public class WorldBlock implements EntityInterface
 		this.indirectLightColor = new Color();
 		this.hasCollision = true;
 		this.isSolid = true;
+		this.id = WorldBlock.idIndex;
+		WorldBlock.idIndex++;
 	}
 
 	public Size getSize()

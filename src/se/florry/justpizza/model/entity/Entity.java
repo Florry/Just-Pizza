@@ -33,6 +33,7 @@ public abstract class Entity implements EntityInterface
 	public final Vector2f lastPostion;
 	public final Vector2f velocity;
 	public int direction;
+	public boolean shouldCollide;
 
 	protected boolean isAffectedByGravity;
 	protected boolean isFalling;
@@ -56,6 +57,7 @@ public abstract class Entity implements EntityInterface
 		this.world = world;
 		this.material = new Material(this.getTexture());
 		this.behaviours = new HashMap<>();
+		this.shouldCollide = true;
 	}
 
 	public void process()
@@ -65,45 +67,34 @@ public abstract class Entity implements EntityInterface
 				this.getSize().width,
 				this.getSize().height);
 
-		if (Collision.canMoveToNewPosition(entityRectX, this, this.world))
+		if (!this.shouldCollide || Collision.canMoveToNewPosition(entityRectX, this, this.world))
 		{
 			this.position.x += this.velocity.x * Game.getDeltaTime();
 
 			if (this.velocity.x != 0)
-			{
 				this.direction = (int) Math.signum(this.velocity.x);
-			}
 
 			if (this.velocity.x > 0)
 			{
 				if (this.velocity.x - GameConstants.Entity.VELOCITY_FRICTION * Game.getDeltaTime() < 0)
-				{
 					this.velocity.x = 0;
-				} else
-				{
+				else
 					this.velocity.x -= GameConstants.Entity.VELOCITY_FRICTION * Game.getDeltaTime();
-				}
+
 			} else if (this.velocity.x < 0)
-			{
 				if (this.velocity.x + GameConstants.Entity.VELOCITY_FRICTION * Game.getDeltaTime() > 0)
-				{
 					this.velocity.x = 0;
-				} else
-				{
+				else
 					this.velocity.x += GameConstants.Entity.VELOCITY_FRICTION * Game.getDeltaTime();
-				}
-			}
 		} else
-		{
 			this.velocity.x = 0;
-		}
 
 		final Rectangle entityRectY = new Rectangle((int) this.position.x,
 				(int) (this.position.y + this.velocity.y * Game.getDeltaTime()),
 				this.getSize().width,
 				this.getSize().height);
 
-		if (Collision.canMoveToNewPosition(entityRectY, this, this.world))
+		if (!this.shouldCollide || Collision.canMoveToNewPosition(entityRectY, this, this.world))
 		{
 			this.position.y += this.velocity.y * Game.getDeltaTime();
 			this.isFalling = true;
@@ -116,9 +107,7 @@ public abstract class Entity implements EntityInterface
 		this.calculateLightLevel();
 
 		if (this.processHandler != null)
-		{
 			this.processHandler.handle(true);
-		}
 	}
 
 	public void addProcessCallbackHandler(final GenericHandler handler)
@@ -134,7 +123,6 @@ public abstract class Entity implements EntityInterface
 
 		for (int x = (int) (entityGridPosition.x - GameConstants.Physics.COLLISION_CHECK_BLOCK_SIZE); x < entityGridPosition.x
 				+ GameConstants.Physics.COLLISION_CHECK_BLOCK_SIZE; x++)
-		{
 			for (int y = (int) (entityGridPosition.y - GameConstants.Physics.COLLISION_CHECK_BLOCK_SIZE); y < entityGridPosition.y
 					+ GameConstants.Physics.COLLISION_CHECK_BLOCK_SIZE; y++)
 			{
@@ -149,7 +137,6 @@ public abstract class Entity implements EntityInterface
 					lightLevel.b += currentLightLevel.b;
 				}
 			}
-		}
 
 		lightLevel.r /= numberOfBlocks;
 		lightLevel.g /= numberOfBlocks;
@@ -241,17 +228,14 @@ public abstract class Entity implements EntityInterface
 	public boolean equals(final Object obj)
 	{
 		if (this == obj)
-		{
 			return true;
-		} else if (obj instanceof Entity)
+		else if (obj instanceof Entity)
 		{
 			final Entity otherEntity = (Entity) obj;
 			return this.getId()
 					.equals(otherEntity.getId());
 		} else
-		{
 			return false;
-		}
 	}
 
 	public boolean isFalling()
