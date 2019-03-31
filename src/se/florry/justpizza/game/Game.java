@@ -9,7 +9,6 @@ import se.florry.engine.model.Engine;
 import se.florry.engine.model.TextModel;
 import se.florry.justpizza.constants.GameConstants;
 import se.florry.justpizza.lighting.Lighting;
-import se.florry.justpizza.model.entity.block.Air;
 import se.florry.justpizza.model.entity.humanoid.Humanoid;
 import se.florry.justpizza.physics.Gravity;
 import se.florry.justpizza.player.Player;
@@ -45,21 +44,20 @@ public class Game
 	protected void init()
 	{
 		this.world.init();
+
 		this.player.init();
 		this.addInputs();
 		this.engine.setBackgroundColor(new Color(123, 189, 255, 255));
 
 		for (int i = 0; i < this.world.rows(1); i++)
-		{
 			if (this.world.get(1, i) != null)
 			{
-				if (!(this.world.get(1, i) instanceof Air))
-				{
-					worldRenderOffset.y -= i * GameConstants.Entity.WORLD_BLOCK_SIZE - GameConstants.Entity.WORLD_BLOCK_SIZE * 5;
-					break;
-				}
+				// if (!(this.world.get(1, i) instanceof Air))
+				// {
+				Game.worldRenderOffset.y -= i * GameConstants.Entity.WORLD_BLOCK_SIZE - GameConstants.Entity.WORLD_BLOCK_SIZE * 5;
+				break;
+				// }
 			}
-		}
 	}
 
 	protected void run()
@@ -67,7 +65,7 @@ public class Game
 		this.engine.run(deltaTime ->
 		{
 
-			setDeltaTime(deltaTime);
+			Game.setDeltaTime(deltaTime);
 			this.processGravity();
 			this.processWorld();
 			this.player.process(deltaTime);
@@ -80,7 +78,7 @@ public class Game
 
 	private static void setDeltaTime(final float input)
 	{
-		deltaTime = input;
+		Game.deltaTime = input;
 	}
 
 	private void addInputs()
@@ -90,19 +88,19 @@ public class Game
 		this.engine.input()
 				.press(GLFW.GLFW_KEY_RIGHT, Void ->
 				{
-					worldRenderOffset.x -= 1 * speed.x;
+					Game.worldRenderOffset.x -= 1 * speed.x;
 				})
 				.press(GLFW.GLFW_KEY_LEFT, Void ->
 				{
-					worldRenderOffset.x += 1 * speed.x;
+					Game.worldRenderOffset.x += 1 * speed.x;
 				})
 				.press(GLFW.GLFW_KEY_DOWN, Void ->
 				{
-					worldRenderOffset.y -= 1 * speed.x;
+					Game.worldRenderOffset.y -= 1 * speed.x;
 				})
 				.press(GLFW.GLFW_KEY_UP, Void ->
 				{
-					worldRenderOffset.y += 1 * speed.x;
+					Game.worldRenderOffset.y += 1 * speed.x;
 				})
 				.press(GLFW.GLFW_KEY_LEFT_SHIFT, Void ->
 				{
@@ -121,10 +119,8 @@ public class Game
 	private void displayFPS()
 	{
 		if (this.engine.getCurrentFrame() % 60 == 0)
-		{
 			this.fpsMeter.setSentence("FPS: " + this.engine.getFramerate() + ". Rendered Entities: " + this.world.renderedObjects + ". Total: "
 					+ this.world.columns() * this.world.rows(this.world.columns() - 1));
-		}
 		this.fpsMeter.render();
 	}
 
@@ -135,10 +131,8 @@ public class Game
 
 	private void processLighting()
 	{
-		if (this.engine.getCurrentFrame() % 15 == 0)
-		{
-			this.lighting.process();
-		}
+		// if (this.engine.getCurrentFrame() % 4 == 0)
+		this.lighting.process();
 	}
 
 	private void processWorld()
@@ -148,7 +142,7 @@ public class Game
 
 	public static float getDeltaTime()
 	{
-		return deltaTime;
+		return Game.deltaTime;
 	}
 
 }

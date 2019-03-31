@@ -6,8 +6,6 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 
 import se.florry.engine.model.Color;
-import se.florry.justpizza.constants.GameConstants;
-import se.florry.justpizza.game.Game;
 import se.florry.justpizza.model.entity.block.Air;
 import se.florry.justpizza.model.entity.block.WorldBlock;
 import se.florry.justpizza.model.entity.light.Light;
@@ -105,8 +103,12 @@ public class Lighting
 		// }
 		// }
 		// }
+		this.renderLighting();
+	}
 
-		this.blackout();
+	public void renderLighting()
+	{
+		// this.blackout();
 
 		final int xStart = this.world.getXStart();
 		final int xLimit = this.world.getXLimit();
@@ -115,90 +117,98 @@ public class Lighting
 
 		for (int x = xStart; x < xLimit; x++)
 			for (int y = yStart; y < yLimit; y++)
+			// for (int x = 0; x < this.world.columns(); x++)
+			// for (int y = 0; y < this.world.rows(x); y++)
 			{
 				int lightStrength = 255;
 				final WorldBlock current = this.world.get(x, y);
 
-				if (current != null && !(current instanceof Air))
+				if (current != null)
 				{
-					final float currentAdjustedGridX = (current.position.x + (Game.worldRenderOffset.x / GameConstants.Entity.WORLD_BLOCK_SIZE))
-							/ GameConstants.Entity.WORLD_BLOCK_SIZE;
-					final float currentAdjustedGridY = (current.position.y + (Game.worldRenderOffset.y / GameConstants.Entity.WORLD_BLOCK_SIZE))
-							/ GameConstants.Entity.WORLD_BLOCK_SIZE;
 
-					final float distance = (float) GameUtils.getDistance(currentAdjustedGridX,
-							currentAdjustedGridY,
-							this.player.getLightGridPosition().x,
-							this.player.getLightGridPosition().y);
+					final float distance = (float) GameUtils.getDistance(this.player.getLightGridPosition().x, this.player.getLightGridPosition().y, x, y);
 
-					if (distance > 9.5f)
-						continue;
+					// if (distance > 9.5f)
+					// continue;
 
-					if (distance > 2f)
-						lightStrength -= (distance * 10);
-
-					final Vector2f direction = new Vector2f(currentAdjustedGridX, currentAdjustedGridY);
-
-					direction.x -= this.player.getLightGridPosition().x;
-					direction.y -= this.player.getLightGridPosition().y;
+					// if (distance > 5.5f)
+					// lightStrength -= (distance) * 10;
 
 					try
 					{
-						direction.normalise(direction);
 
-						final boolean isLit = this.rayMarch(new Vector2f(currentAdjustedGridX, currentAdjustedGridY),
-								direction,
-								this.player.getLightGridPosition(),
+						// final int skylightHits =
+						// this.calculateShadowsFromSkylight(x, y, direction,
+						// this.player.getLightGridPosition(), current.id);
+
+						// final Vector2f direction = new Vector2f(x, y);
+						//
+						// direction.x -= this.player.getLightGridPosition().x;
+						// direction.y -= this.player.getLightGridPosition().y;
+						//
+						// direction.normalise(direction);
+
+						int hits = this.calculateShadowsFromLight(x,
+								y,
+								(int) this.player.getLightGridPosition().x,
+								(int) this.player.getLightGridPosition().y,
 								current.id);
 
-						if (isLit)
+						// int hits = this.calculateShadowsFromLight(x, y, x +
+						// 2, 0, current.id);
+
+						if (hits == 0)
 							current.setLightLevel(new Color(lightStrength, lightStrength, lightStrength));
+						else
+						{
+							lightStrength += 150;
+							current.setLightLevel(new Color(lightStrength / hits, lightStrength / hits, lightStrength / hits));
+						}
 
 					} catch (final Exception e)
 					{
 					}
 				}
 			}
-
 	}
 
 	final int MAX_STEPS = 100;
+	final int MAX_HITS = 100;
 
-	private boolean rayMarch(final Vector2f origin, final Vector2f direction, final Vector2f endLocation, final Integer currentId)
+	private int calculateShadowsFromLight(final int xOrigin, final int yOrigin, final int endLocationX, final int endLocationY, final Integer currentId)
 	{
-		boolean didHitBlock = false;
+		int hits = 0;
 
-		for (int i = 1; i < this.MAX_STEPS; i++)
+		final Vector2f direction = new Vector2f(xOrigin, yOrigin);
+
+		direction.x -= endLocationX;
+		direction.y -= endLocationY;
+
+		direction.normalise(direction);
+
+		for (int i = 0; i < this.MAX_STEPS; i++)
 		{
-			final Vector2f positionToCheck = new Vector2f();
+			final int x = Math.round(new Float(xOrigin) - (direction.x * i));
+			final int y = Math.round(new Float(yOrigin) - (direction.y * i));
 
-			positionToCheck.x = origin.x + (direction.x);
-			positionToCheck.y = origin.y + (direction.y);
-
-			positionToCheck.x *= i;
-			positionToCheck.y *= i;
-
-			final int x = (int) Math.round(positionToCheck.x);
-			final int y = (int) Math.round(positionToCheck.y);
-
-			if (x == (int) Math.round(endLocation.x) && y == (int) Math.round(endLocation.y))
+			if (x == endLocationX && y == endLocationY)
 			{
-				didHitBlock = false;
+				hits++;
 				break;
 			}
 
 			final WorldBlock wallBlock = this.world.get(x, y);
 
-			if (wallBlock != null && !(wallBlock instanceof Air) && wallBlock.id != currentId)
+			if (wallBlock != null && wallBlock.blocksLight())
 			{
-				didHitBlock = true;
-				break;
-			}
+				hits++;
 
-			// didHitBlock = true;
+				if (hits == this.MAX_HITS)
+					break;
+			}
 		}
 
-		return !didHitBlock;
+		return hits;
 	}
 
 	public void process2()
@@ -260,7 +270,7 @@ public class Lighting
 		// this.lights.clear();
 	}
 
-	private void blackout()
+	public void blackout()
 	{
 		for (int x = 0; x < this.world.columns(); x++)
 			for (int y = 0; y < this.world.rows(x); y++)

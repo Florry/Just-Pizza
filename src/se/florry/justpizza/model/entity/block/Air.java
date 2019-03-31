@@ -9,14 +9,15 @@ public class Air extends WorldBlock
 		this.modelData.color.g = 255;
 		this.modelData.color.b = 255;
 		this.modelData.color.a = 255;
-		this.modelData.setTransparency(true);
-		this.isSolid = false;
+		// this.modelData.setTransparency(true);
+		// this.isSolid = false;
+		this.blocksLight = false;
 	}
 
 	@Override
 	public String getTexture()
 	{
-		return "blocks/airTransparent";
+		return "blocks/block01Beach";
 	}
 
 }

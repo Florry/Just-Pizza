@@ -26,6 +26,7 @@ public class WorldBlock implements EntityInterface
 	protected final Color indirectLightColor;
 	protected boolean hasCollision;
 	protected boolean isSolid;
+	protected boolean blocksLight;
 
 	public final Integer id;
 
@@ -40,6 +41,7 @@ public class WorldBlock implements EntityInterface
 		this.indirectLightColor = new Color();
 		this.hasCollision = true;
 		this.isSolid = true;
+		this.blocksLight = true;
 		this.id = WorldBlock.idIndex;
 		WorldBlock.idIndex++;
 	}
@@ -141,6 +143,11 @@ public class WorldBlock implements EntityInterface
 	public boolean hasCollision()
 	{
 		return this.hasCollision;
+	}
+
+	public boolean blocksLight()
+	{
+		return this.blocksLight;
 	}
 
 	@Override

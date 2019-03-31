@@ -19,12 +19,16 @@ public final class Player
 	public final Entity controlledEntity;
 	public Vector2f lightPosition;
 
+	private boolean lightMovingUp = false;
+
 	public Player(final Input input, final World world, final Entity entity)
 	{
 		this.input = input;
 		this.world = world;
 		this.controlledEntity = entity;
 		this.lightPosition = new Vector2f();
+		this.lightPosition.x = 2545;
+		this.lightPosition.y = 600;
 	}
 
 	public void init()
@@ -136,12 +140,29 @@ public final class Player
 		// }
 
 		this.lightPosition.x = this.controlledEntity.position.x;
-		this.lightPosition.y = this.controlledEntity.position.y - GameConstants.Entity.WORLD_BLOCK_SIZE;
+		this.lightPosition.y = this.controlledEntity.position.y + (GameConstants.Entity.WORLD_BLOCK_SIZE);
+
+		// if (this.lightMovingUp)
+		// {
+		// this.lightPosition.y -= (200 * deltaTime);
+		// this.lightPosition.x += (200 * deltaTime);
+		// } else
+		// {
+		// this.lightPosition.y += (200 * deltaTime);
+		// this.lightPosition.x -= (200 * deltaTime);
+		// }
+		//
+		// if (this.lightPosition.y >= 1840)
+		// this.lightMovingUp = true;
+		//
+		// if (this.lightPosition.y <= 600)
+		// this.lightMovingUp = false;
 	}
 
 	public Vector2f getLightGridPosition()
 	{
 		final Vector2f gridPosition = new Vector2f();
+
 		gridPosition.x = (int) this.lightPosition.x / GameConstants.Entity.WORLD_BLOCK_SIZE;
 		gridPosition.y = (int) this.lightPosition.y / GameConstants.Entity.WORLD_BLOCK_SIZE;
 

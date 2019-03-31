@@ -13,6 +13,7 @@ public final class GrassDecor extends WorldBlock
 		this.hasCollision = false;
 		this.modelData.setTransparency(true);
 		this.isSolid = false;
+		this.blocksLight = false;
 	}
 
 	@Override

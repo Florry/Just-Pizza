@@ -19,10 +19,8 @@ import se.florry.justpizza.model.entity.Entity;
 import se.florry.justpizza.model.entity.block.Air;
 import se.florry.justpizza.model.entity.block.Dirt;
 import se.florry.justpizza.model.entity.block.Grass;
-import se.florry.justpizza.model.entity.block.GrassSlope;
 import se.florry.justpizza.model.entity.block.TEMP_TUNNEL;
 import se.florry.justpizza.model.entity.block.WorldBlock;
-import se.florry.justpizza.model.entity.block.decor.GrassDecor;
 
 public class World
 {
@@ -83,10 +81,10 @@ public class World
 					} else if ((int) colorOfPixel.b == 255)
 					{
 						this.add(x, y, 0, new Grass());
-						if (Math.random() > 0.5)
-						{
-							this.add(x, y - 1, 0, new GrassDecor());
-						}
+						// if (Math.random() > 0.5)
+						// {
+						// this.add(x, y - 1, 0, new GrassDecor());
+						// }
 					} else
 					{
 						this.add(x, y, 0, new Air());
@@ -100,18 +98,19 @@ public class World
 			}
 		}
 
-		this.add(19, 7, 0, new GrassSlope(this));
-		this.add(23, 8, 0, new GrassSlope(this));
-		this.add(26, 9, 0, new GrassSlope(this));
-		this.add(28, 10, 0, new GrassSlope(this));
-		this.add(30, 11, 0, new GrassSlope(this));
-		this.add(32, 12, 0, new GrassSlope(this));
-		this.add(48, 13, 0, new GrassSlope(this));
-		this.add(51, 15, 0, new GrassSlope(this));
-		this.add(53, 16, 0, new GrassSlope(this));
-		this.add(55, 17, 0, new GrassSlope(this));
-		this.add(57, 18, 0, new GrassSlope(this));
+		// this.add(19, 7, 0, new GrassSlope(this));
+		// this.add(23, 8, 0, new GrassSlope(this));
+		// this.add(26, 9, 0, new GrassSlope(this));
+		// this.add(28, 10, 0, new GrassSlope(this));
+		// this.add(30, 11, 0, new GrassSlope(this));
+		// this.add(32, 12, 0, new GrassSlope(this));
+		// this.add(48, 13, 0, new GrassSlope(this));
+		// this.add(51, 15, 0, new GrassSlope(this));
+		// this.add(53, 16, 0, new GrassSlope(this));
+		// this.add(55, 17, 0, new GrassSlope(this));
+		// this.add(57, 18, 0, new GrassSlope(this));
 
+		// this.createMountains(GameConstants.World.DEFAULT_Z_DEPTH);
 	}
 
 	private void createMountains(final int z)
@@ -401,7 +400,7 @@ public class World
 
 		WorldBlock current = this.get(x, y, zInput);
 
-		if (current != null && !(current instanceof Air))
+		if (current != null)
 		{
 			current.position.x = x * (GameConstants.Entity.WORLD_BLOCK_SIZE);
 			current.position.y = y * (GameConstants.Entity.WORLD_BLOCK_SIZE);
